@@ -1,6 +1,6 @@
 import React from 'react';
 import Counter from './Counter';
-import{ createStore } from 'redux';
+import{ createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -22,7 +22,13 @@ const reducer = (state = initialState, action) => {
         return state ;
   }
 }
-const store = createStore (reducer);
+const logger = store => next => action => {
+  console.log('dispatching', action)
+  let result = next(action)
+  console.log('next state', store.getState())
+  return result
+ }
+const store = createStore (reducer, applyMiddleware(logger));
 function App() {
   return (
     <Provider store={store}>
